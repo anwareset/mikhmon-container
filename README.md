@@ -19,7 +19,7 @@ docker rm --force mikhmon-app
 ### Kubernetes
 The `YAML` file contains object definition of Kubernetes resources (deployments, service, expose). Tested on GKE (Google Kubernetes Engine).
 ```shell
-kubectl create namespaces
+kubectl create namespace mikhmon-app
 kubectl apply -f deployments.yml
 kubectl apply -f services.yml
 kubectl apply -f ingress.yml
