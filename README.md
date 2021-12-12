@@ -4,12 +4,16 @@
 ## Description
 This image is using latest [alpine](https://hub.docker.com/_/alpine) for the base, with PHP 7.4 as the runtime. The exposed port is `80/tcp` and the default volume is pointed at `/var/www/html` which is the [source code](https://github.com/laksa19/mikhmonv3) located inside container. Hopefully, this will comply with any container orchestration platform like [Kubernetes](https://kubernetes.io) for the best practice of scaling and high availability.
 
-## Usage
+## Usages
 ### Docker
 Use any container tool such as `docker` or `podman` with simple command.
 ```shell
 docker pull trianwar/mikhmon
-docker run -d -p 80:80 trianwar/mikhmon
+docker run --name mikhmon-app -d -p 80:80 trianwar/mikhmon
+```
+Force stop and remove.
+```shell
+docker rm --force mikhmon-app
 ```
 
 ### Kubernetes
@@ -24,6 +28,12 @@ kubectl apply -f ingress.yml
 Scale the application manually with `--replicas` option. Adjust the **`N`** number.
 ```shell
 kubectl scale deployments minishift-app --replicas=N
+```
+
+Delete the resources from cluster.
+```shell
+kubectl delete all
+kubectl delete namespace mikhmon-app
 ```
 
 ## Testing
