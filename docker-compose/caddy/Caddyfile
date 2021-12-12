@@ -1,0 +1,5 @@
+alibaba-ecs.init.web.id {
+  root * /var/www/html
+  php_fastcgi php7-mikhmon:9000
+  file_server
+}

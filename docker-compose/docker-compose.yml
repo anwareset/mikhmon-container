@@ -1,0 +1,42 @@
+version: "3"
+services:
+  php7:
+    build:
+      context: .
+      dockerfile: php7-fpm.Dockerfile
+    container_name: php7-mikhmon
+    user: 82:82
+    tty: true
+    working_dir: /var/www/html
+    volumes: 
+      - ./mikhmon:/var/www/html
+
+## Use Caddy to get HTTP(S) automatically
+  caddy:
+    depends_on:
+      - php7
+    image: caddy:alpine
+    container_name: nginx-caddy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./mikhmon:/var/www/html
+      - ./caddy/caddy_data:/data
+      - ./caddy/caddy_config:/config
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+
+## Use NGINX
+#  nginx:
+#    depends_on:
+#     - php7
+#    image: nginx:alpine
+#    container_name: nginx-mikhmon
+#    tty: true
+#    ports:
+#      - 80:80
+#    volumes: 
+#      - ./mikhmon:/var/www/html
+#      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+#      - ./nginx/nginx-access.log:/tmp/nginx-access.log
+#      - ./nginx/nginx-error.log:/tmp/nginx-error.log
