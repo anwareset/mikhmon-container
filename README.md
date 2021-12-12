@@ -17,7 +17,7 @@ If you want to access source code files inside the container, you need to mount 
 docker run --name mikhmon-app -d -p 80:80 -v mikhmon-volume trianwar/mikhmon
 docker volume ls
 ```
-It's mounted to host at `/var/lib/docker/volume/mikhmon-volume/_data`. You can backup or modify those files.
+It's mounted to host at `/var/lib/docker/volumes`. You can backup or modify those files.
 
 To force stop and remove container.
 ```shell
