@@ -2,7 +2,7 @@
 **MikroTik Hotspot Monitor V3** by [**laksa19**](https://github.com/laksa19) inside container.
 
 ## Description
-This image is using latest [alpine](https://hub.docker.com/_/alpine) for the base, with PHP 7.4 as the runtime. The exposed port is `80/tcp` and the default volume is pointed at `/var/www/html` which is the [source code](https://github.com/laksa19/mikhmonv3) located inside container. Hopefully, this will comply with any container orchestration platform like [Kubernetes](https://kubernetes.io) for the best practice of scaling and high availability.
+This image is using latest [alpine](https://hub.docker.com/_/alpine) for the base, with PHP 7.4 as the runtime. The exposed port is `80/tcp` and the default volume is pointed at `/var/www/mikhmon` which is the [source code](https://github.com/laksa19/mikhmonv3) located inside container. Hopefully, this will comply with any container orchestration platform like [Kubernetes](https://kubernetes.io) for the best practice of scaling and high availability.
 
 ## Usages
 ### Docker
@@ -11,7 +11,15 @@ Use any container tool such as `docker` or `podman` with simple command.
 docker pull trianwar/mikhmon
 docker run --name mikhmon-app -d -p 80:80 trianwar/mikhmon
 ```
-Force stop and remove.
+
+If you want to access source code inside the container, you need to mount the container storage with volume.
+```shell
+docker run --name mikhmon-app -d -p 80:80 -v mikhmon-volume trianwar/mikhmon
+```
+
+Now container storage is mounted tho to host at `/var/lib/docker/volume/mikhmon-volume/_data`.
+
+To force stop and remove container.
 ```shell
 docker rm --force mikhmon-app
 ```
