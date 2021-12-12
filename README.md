@@ -27,7 +27,7 @@ kubectl apply -f ingress.yml
 
 Scale the application manually with `--replicas` option. Adjust the **`N`** number.
 ```shell
-kubectl scale deployments minishift-app --replicas=N
+kubectl scale deployments mikhmon-app --replicas=N
 ```
 
 Delete the resources from cluster.
