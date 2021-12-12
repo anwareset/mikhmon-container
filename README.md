@@ -11,13 +11,7 @@ Use any container tool such as `docker` or `podman` with simple command.
 docker pull trianwar/mikhmon
 docker run --name mikhmon-app -d -p 80:80 trianwar/mikhmon
 ```
-
-If you want to access source code files inside the container, you need to mount container storage with volume option.
-```shell
-docker run --name mikhmon-app -d -p 80:80 -v mikhmon-volume trianwar/mikhmon
-docker volume ls
-```
-It's mounted to host at `/var/lib/docker/volumes`. You can backup or modify those files.
+If you want to access source code files inside the container storage, check the mounted volume on host at `/var/lib/docker/volumes`. You can backup or modify those files.
 
 To force stop and remove container.
 ```shell
