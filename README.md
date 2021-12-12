@@ -12,12 +12,12 @@ docker pull trianwar/mikhmon
 docker run --name mikhmon-app -d -p 80:80 trianwar/mikhmon
 ```
 
-If you want to access source code inside the container, you need to mount the container storage with volume.
+If you want to access source code files inside the container, you need to mount container storage with volume option.
 ```shell
 docker run --name mikhmon-app -d -p 80:80 -v mikhmon-volume trianwar/mikhmon
+docker volume ls
 ```
-
-Now container storage is mounted tho to host at `/var/lib/docker/volume/mikhmon-volume/_data`.
+It's mounted to host at `/var/lib/docker/volume/mikhmon-volume/_data`. You can backup or modify those files.
 
 To force stop and remove container.
 ```shell
@@ -25,7 +25,7 @@ docker rm --force mikhmon-app
 ```
 
 ### Kubernetes
-The `YAML` file contains object definition of Kubernetes resources (deployments, service, expose). Tested on GKE (Google Kubernetes Engine).
+The YAML file contains object definition of Kubernetes resources (deployments, services, and ingress). Tested on GKE (Google Kubernetes Engine).
 ```shell
 kubectl create namespace mikhmon-app
 kubectl apply -f deployments.yml
