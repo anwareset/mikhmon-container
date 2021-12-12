@@ -1,0 +1,25 @@
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mikhmon-app
+  namespace: mikhmon-app
+  labels:
+    app: mikhmon-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mikhmon-app
+  template:
+    metadata:
+      labels:
+        app: mikhmon-app
+    spec:
+      containers:
+      - name: mikhmon-app
+        image: trianwar/mikhmon
+        ports:
+        - containerPort: 80
+
