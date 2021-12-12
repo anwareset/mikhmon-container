@@ -6,7 +6,7 @@ This image is using latest [alpine](https://hub.docker.com/_/alpine) for the bas
 
 ## Usages
 ### Docker
-Use any container tool such as `docker` or `podman` with simple command.
+Use any container tool such as `docker` or `podman` with simple command. Most easy way, since it's not using any web server to run.
 ```shell
 docker pull trianwar/mikhmon
 docker run --name mikhmon-app -d -p 80:80 trianwar/mikhmon
@@ -38,7 +38,41 @@ kubectl delete all
 kubectl delete namespace mikhmon-app
 ```
 
+### Docker Compose
+Enter the `docker-compose` directory, and you will found two options to of using it.
+1. **Caddy**. Cool web server that automatically provision SSL (Let's Encrypt) for your site, port `80/tcp` will redirected to `443/tcp`.
+2. **Nginx**. Run `80/tcp` without SSL by default. But you can modify `nginx.conf` to use certificates and open another port as you wish.
+
+To use this `docker-compose.yml` you need to download MIKHMON source code manually, and adjust the owner of those files.
+```shell
+cd docker-compose
+curl -LJO https://github.com/laksa19/mikhmonv3/archive/refs/heads/master.zip
+unzip -q *.zip
+rm -rf *.zip
+mv -f mikhmon* mikhmon
+sudo chown -R 82:82 mikhmon
+```
+Change the permission to use `uid=82(www-data) gid=82(www-data)`, this is because the [`php:7.4-fpm-alpine`](https://hub.docker.com/_/php?tab=tags&page=1&name=7.4-fpm-alpine) seemly [use that user by default](https://hub.docker.com/layers/php/library/php/7.4.0-fpm-alpine/images/sha256-35565c5edd4dd676a7ea7d7b566eab08b2ee6474263f6cd384d4d29d4590a199?context=explore), and I don't find other way to alter it yet.
+
+![Change Owner](https://github.com/anwareset/mikhmon-container/raw/main/docker-compose/Screenshot_62.png)
+
+Then let's build and turn it up. Append `-d` to detach and keep it running in background.
+```shell
+docker-compose up --build --remove-orphans -d
+docker ps
+```
+![Container Running List](https://github.com/anwareset/mikhmon-container/raw/main/docker-compose/Screenshot_11.png)
+
+![Add Router](https://github.com/anwareset/mikhmon-container/raw/main/docker-compose/Screenshot_63.png)
+As you can see the MikroTik Router is added successfully to MIKHMON, and we got one year valid SSL from Let's Encrypt.
+
+To stop the container, you can turn it down.
+```shell
+docker-compose down --remove-orphans
+```
+
 ## Testing
+### Dockerfile
 Feel free to modify and build the `Dockerfile` to fit with your needs.
 ```shell
 docker build --no-cache -t mikhmon .
