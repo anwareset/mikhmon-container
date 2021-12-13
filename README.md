@@ -78,6 +78,9 @@ Feel free to modify and build the `Dockerfile` to fit with your needs.
 docker build --no-cache -t mikhmon .
 ```
 
+## Shortage
+Please check this [#issue](https://github.com/laksa19/mikhmonv3/issues/41) from the application side. Persistent Volume on Kubernetes unable to use due to Unspesific Location of Stateful files.
+
 ---
 
 ## References
