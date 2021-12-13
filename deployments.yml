@@ -1,5 +1,4 @@
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -21,5 +20,4 @@ spec:
       - name: mikhmon-app
         image: trianwar/mikhmon
         ports:
-        - containerPort: 80
-
+        - containerPort: 8080
