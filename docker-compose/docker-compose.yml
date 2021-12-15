@@ -16,7 +16,7 @@ services:
     depends_on:
       - php7
     image: caddy:alpine
-    container_name: nginx-caddy
+    container_name: caddy-mikhmon
     ports:
       - 80:80
       - 443:443
