@@ -49,7 +49,6 @@ Change the owner to `uid=82(www-data) gid=82(www-data)`, this is because the [`p
 cd docker-compose
 sudo chown -R 82:82 mikhmonv3
 ```
-![Change Owner](https://github.com/anwareset/mikhmon-container/raw/main/docker-compose/Screenshot_62.png)
 
 Then let's build and turn it up. Append `-d` to detach and keep it running in background.
 ```shell
