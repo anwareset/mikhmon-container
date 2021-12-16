@@ -43,17 +43,12 @@ Enter the `docker-compose` directory, and you will found two options to of using
 1. **Caddy**. Cool web server that automatically provision SSL (Let's Encrypt) for your site, port `80/tcp` will redirected to `443/tcp`.
 2. **Nginx**. Run `80/tcp` without SSL by default. But you can modify `nginx.conf` to use certificates and open another port as you wish.
 
-To use this `docker-compose.yml` you need to download MIKHMON source code manually, and adjust the owner of those files.
-```shell
-cd docker-compose
-curl -LJO https://github.com/laksa19/mikhmonv3/archive/refs/heads/master.zip
-unzip -q *.zip
-rm -rf *.zip
-mv -v mikhmon*master mikhmon
-sudo chown -R 82:82 mikhmon
-```
 Change the owner to `uid=82(www-data) gid=82(www-data)`, this is because the [`php:7.4-fpm-alpine`](https://hub.docker.com/_/php?tab=tags&page=1&name=7.4-fpm-alpine) seemly [use that user by default](https://hub.docker.com/layers/php/library/php/7.4.0-fpm-alpine/images/sha256-35565c5edd4dd676a7ea7d7b566eab08b2ee6474263f6cd384d4d29d4590a199?context=explore), and I don't find other way to alter it yet. Also, don't forget to change the domain name of your server in `Caddyfile`.
 
+```shell
+cd docker-compose
+sudo chown -R 82:82 mikhmonv3
+```
 ![Change Owner](https://github.com/anwareset/mikhmon-container/raw/main/docker-compose/Screenshot_62.png)
 
 Then let's build and turn it up. Append `-d` to detach and keep it running in background.

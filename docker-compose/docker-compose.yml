@@ -9,7 +9,7 @@ services:
     tty: true
     working_dir: /var/www/html
     volumes: 
-      - ./mikhmon:/var/www/html
+      - ./mikhmonv3:/var/www/html
 
 ## Use Caddy to get HTTP(S) automatically
   caddy:
@@ -21,7 +21,7 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./mikhmon:/var/www/html
+      - ./mikhmonv3:/var/www/html
       - ./caddy/caddy_data:/data
       - ./caddy/caddy_config:/config
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
@@ -36,7 +36,7 @@ services:
 #    ports:
 #      - 80:80
 #    volumes: 
-#      - ./mikhmon:/var/www/html
+#      - ./mikhmonv3:/var/www/html
 #      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
 #      - ./nginx/nginx-access.log:/tmp/nginx-access.log
 #      - ./nginx/nginx-error.log:/tmp/nginx-error.log
