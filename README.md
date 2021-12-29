@@ -50,6 +50,12 @@ cd docker-compose
 sudo chown -R 82:82 mikhmonv3
 ```
 
+For `caddy` you may append Public IP of the VPS and FQDN to `/etc/hosts` configuration file. Bellow are example from my AWS EC2 server.
+
+```shell
+echo '108.136.227.206 mikhmon.init.web.id' | sudo tee -a /etc/hosts
+```
+
 Then let's build and turn it up. Append `-d` to detach and keep it running in background.
 ```shell
 docker-compose up --build --remove-orphans -d
