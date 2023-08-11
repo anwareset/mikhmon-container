@@ -47,6 +47,8 @@ Change the owner to `uid=82(www-data) gid=82(www-data)`, this is because the [`p
 
 ```shell
 cd docker-compose
+rm mikhmonv3
+git clone https://github.com/laksa19/mikhmonv3.git
 sudo chown -R 82:82 mikhmonv3
 ```
 
