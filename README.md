@@ -58,7 +58,7 @@ echo '108.136.227.206 mikhmon.init.web.id' | sudo tee -a /etc/hosts
 
 Then let's build and turn it up. Append `-d` to detach and keep it running in background.
 ```shell
-docker-compose up --build --remove-orphans -d
+docker compose up --build --remove-orphans -d
 docker ps
 ```
 ![Container Running List](https://github.com/anwareset/mikhmon-container/raw/main/docker-compose/Screenshot_11.png)
@@ -68,7 +68,7 @@ As you can see the MikroTik Router is added successfully to MIKHMON, and we got 
 
 To stop the container, you can turn it down.
 ```shell
-docker-compose down --remove-orphans
+docker compose down --remove-orphans
 ```
 
 ## Testing
