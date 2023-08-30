@@ -21,6 +21,7 @@ docker rm --force mikhmon-app
 ### Kubernetes
 The YAML file contains object definition of Kubernetes resources (deployments, services, and ingress). Tested on GKE (Google Kubernetes Engine).
 ```shell
+cd mikhmon-container/k8s-manifests
 kubectl create namespace mikhmon-app
 kubectl apply -f deployments.yml
 kubectl apply -f services.yml
@@ -46,8 +47,8 @@ Enter the `docker-compose` directory, and you will found two options to of using
 Change the owner to `uid=82(www-data) gid=82(www-data)`, this is because the [`php:7.4-fpm-alpine`](https://hub.docker.com/_/php?tab=tags&page=1&name=7.4-fpm-alpine) seemly [use that user by default](https://hub.docker.com/layers/php/library/php/7.4.0-fpm-alpine/images/sha256-35565c5edd4dd676a7ea7d7b566eab08b2ee6474263f6cd384d4d29d4590a199?context=explore), and I don't find other way to alter it yet. Also, don't forget to change the domain name of your server in `Caddyfile`.
 
 ```shell
-cd docker-compose
-rm mikhmonv3
+cd mikhmon-container/docker-compose
+rm -rvf mikhmonv3
 git clone https://github.com/laksa19/mikhmonv3.git
 sudo chown -R 82:82 mikhmonv3
 ```
@@ -60,17 +61,19 @@ echo '108.136.227.206 mikhmon.init.web.id' | sudo tee -a /etc/hosts
 
 Then let's build and turn it up. Append `-d` to detach and keep it running in background.
 ```shell
-docker compose up --build --remove-orphans -d
+docker network create net1 --driver bridge
+docker compose -p mikhmon up --build --remove-orphans -d
+docker compose ls
 docker ps
 ```
-![Container Running List](https://github.com/anwareset/mikhmon-container/raw/main/docker-compose/Screenshot_11.png)
+![Container Running List](https://github.com/anwareset/mikhmon-container/raw/main/Screenshot_11.png)
 
-![Add Router](https://github.com/anwareset/mikhmon-container/raw/main/docker-compose/Screenshot_63.png)
+![Add Router](https://github.com/anwareset/mikhmon-container/raw/main/Screenshot_63.png)
 As you can see the MikroTik Router is added successfully to MIKHMON, and we got one year valid SSL from Let's Encrypt.
 
 To stop the container, you can turn it down.
 ```shell
-docker compose down --remove-orphans
+docker compose -p mikhmon down --remove-orphans
 ```
 
 ## Testing

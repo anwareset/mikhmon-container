@@ -1,1 +1,6 @@
-mikhmonv3/
+docker-compose/
+k8s-manifests/
+README.md
+Screenshot*.png
+.gitignore
+.dockerignore

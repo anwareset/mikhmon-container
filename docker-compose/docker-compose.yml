@@ -1,22 +1,32 @@
 version: "3"
+networks:
+  net1:
+    name: net1
+    external: true
 services:
   php7:
+    networks:
+      - net1
     build:
       context: .
       dockerfile: php7-fpm.Dockerfile
     container_name: php7-mikhmon
     user: 82:82
     tty: true
+    restart: unless-stopped
     working_dir: /var/www/html
     volumes: 
       - ./mikhmonv3:/var/www/html
 
 ## Use Caddy to get HTTP(S) automatically
   caddy:
+    networks:
+      - net1
     depends_on:
       - php7
     image: caddy:alpine
     container_name: caddy-mikhmon
+    restart: unless-stopped
     ports:
       - 80:80
       - 443:443
