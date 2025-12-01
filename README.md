@@ -56,7 +56,7 @@ kubectl delete -f namespace.yml
 ```
 
 ### Docker Compose
-Enter the `docker-compose` directory. The application uses a pre-built image `trianwar/mikhmon:latest` with Caddy as a reverse proxy to handle SSL termination automatically via Let's Encrypt.
+Enter the `docker-compose` directory. The application uses a pre-built image `trianwar/mikhmon:latest` with Caddy as a reverse proxy to handle SSL termination automatically via Let's Encrypt. Environment variable `MODE=caddy` will disable `nginx` and only run `php-fpm` that will be use with `caddy`.
 
 Update the domain name in `Caddyfile` to match your server's FQDN, and optionally add it to `/etc/hosts` for local testing:
 
@@ -95,7 +95,7 @@ docker build --no-cache -t trianwar/mikhmon:v1.0 .
 ```
 
 ## Notes
-- The application stores stateful data (like router configurations and user passwords) in the `/var/www/mikhmon` container directory, or `mikhmon-data` host directory.
+- The application stores stateful data (like router configurations and user passwords) in the `/var/www/mikhmon` container directory.
 - For Kubernetes deployments, ensure that your cluster has a StorageClass configured for dynamic persistent volume provisioning, or manually create PersistentVolumes.
 - The `nginx.conf` and `supervisord.conf` files must be present in the root directory when building the Docker image.
 - When using Caddy in Docker Compose, remember to update the domain name in the `Caddyfile` to your actual server's FQDN.

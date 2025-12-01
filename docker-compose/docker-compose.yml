@@ -6,7 +6,9 @@ services:
     container_name: php7-mikhmon
     restart: unless-stopped
     volumes: 
-      - ./mikhmon-data:/var/www/mikhmon
+      - mikhmon-data:/var/www/mikhmon
+    environment:
+      - MODE=caddy
 
 ## Use Caddy to get HTTP(S) automatically
   caddy:
@@ -25,6 +27,9 @@ services:
       - ./caddy/caddy_config:/config
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
 
+volumes:
+  mikhmon-data:
+    driver: local
 networks:
   net1:
     name: net1
