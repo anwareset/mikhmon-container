@@ -6,7 +6,7 @@ services:
     container_name: php7-mikhmon
     restart: unless-stopped
     volumes: 
-      - mikhmon-data:/var/www/mikhmon
+      - ./mikhmon-data:/var/www/mikhmon
     environment:
       - MODE=caddy
 
@@ -23,14 +23,11 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - mikhmon-data:/var/www/mikhmon
+      - ./mikhmon-data:/var/www/mikhmon
       - ./caddy/caddy_data:/data
       - ./caddy/caddy_config:/config
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
 
-volumes:
-  mikhmon-data:
-    driver: local
 networks:
   net1:
     name: net1
