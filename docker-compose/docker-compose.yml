@@ -1,29 +1,19 @@
-version: "3"
-networks:
-  net1:
-    name: net1
-    external: true
 services:
-  php7:
+  php7-mikhmon:
     networks:
       - net1
-    build:
-      context: .
-      dockerfile: php7-fpm.Dockerfile
+    image: trianwar/mikhmon:latest
     container_name: php7-mikhmon
-    user: 82:82
-    tty: true
     restart: unless-stopped
-    working_dir: /var/www/html
     volumes: 
-      - ./mikhmonv3:/var/www/html
+      - mikhmon-data:/var/www/mikhmon
 
 ## Use Caddy to get HTTP(S) automatically
   caddy:
     networks:
       - net1
     depends_on:
-      - php7
+      - php7-mikhmon
     image: caddy:alpine
     container_name: caddy-mikhmon
     restart: unless-stopped
@@ -31,22 +21,14 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./mikhmonv3:/var/www/html
       - ./caddy/caddy_data:/data
       - ./caddy/caddy_config:/config
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
 
-## Use NGINX
-#  nginx:
-#    depends_on:
-#     - php7
-#    image: nginx:alpine
-#    container_name: nginx-mikhmon
-#    tty: true
-#    ports:
-#      - 80:80
-#    volumes: 
-#      - ./mikhmonv3:/var/www/html
-#      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
-#      - ./nginx/nginx-access.log:/tmp/nginx-access.log
-#      - ./nginx/nginx-error.log:/tmp/nginx-error.log
+volumes:
+  mikhmon-data:
+    driver: local
+networks:
+  net1:
+    name: net1
+    external: true

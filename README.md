@@ -2,14 +2,14 @@
 **MikroTik Hotspot Monitor V3** by [**laksa19**](https://github.com/laksa19) inside container.
 
 ## Description
-This image is using latest [alpine](https://hub.docker.com/_/alpine) for the base with PHP 7.4 as the runtime, executed by user `www-data`. The exposed port is `8080/tcp` and the default volume is pointed at `/var/www/html` which is the [source code](https://github.com/laksa19/mikhmonv3) located inside container. Hopefully, this will comply with any container orchestration platform like [Kubernetes](https://kubernetes.io) for the best practice of scaling and high availability.
+This image is using latest [alpine](https://hub.docker.com/_/alpine) for the base with PHP 7.4 FPM as the runtime. The exposed port is `8080/tcp` and the default volume is pointed at `/var/www/mikhmon` which is the [source code](https://github.com/laksa19/mikhmonv3) located inside container. Nginx and PHP-FPM are managed by supervisord inside the container. Hopefully, this will comply with any container orchestration platform like [Kubernetes](https://kubernetes.io) for the best practice of scaling and high availability.
 
 ## Usages
 ### Docker
-Use any container tool such as `docker` or `podman` with simple command. Most easy way, since it's not using any web server to run.
+Use any container tool such as `docker` or `podman` with simple command.
 ```shell
 docker pull trianwar/mikhmon
-docker run --name mikhmon-app -d -p 80:8080 -v mikhmon-volume trianwar/mikhmon
+docker run --name mikhmon-app -d -p 8080:8080 -v mikhmon-volume trianwar/mikhmon
 ```
 If you want to access source code files inside the container storage, check the mounted volume on host at `/var/lib/docker/volumes`. You can backup or modify those files.
 
@@ -19,10 +19,17 @@ docker rm --force mikhmon-app
 ```
 
 ### Kubernetes
-The YAML file contains object definition of Kubernetes resources (deployments, services, and ingress). Tested on GKE (Google Kubernetes Engine).
+The YAML files contain object definitions of Kubernetes resources (namespace, deployments, services, ingress, and persistent volume claims). Tested on GKE (Google Kubernetes Engine).
+
+First, apply the namespace and persistent volume claims:
 ```shell
 cd mikhmon-container/k8s-manifests
-kubectl create namespace mikhmon-app
+kubectl apply -f namespace.yml
+kubectl apply -f pvc.yml
+```
+
+Then, apply the deployment, service, and ingress:
+```shell
 kubectl apply -f deployments.yml
 kubectl apply -f services.yml
 kubectl apply -f ingress.yml
@@ -30,39 +37,38 @@ kubectl apply -f ingress.yml
 
 Scale the application manually with `--replicas` option. Adjust the **`N`** number.
 ```shell
-kubectl scale deployments mikhmon-app --replicas=N
+kubectl scale deployments mikhmon-app -n mikhmon-app --replicas=N
 ```
 
-Delete the resources from cluster.
+Check the deployment status:
 ```shell
-kubectl delete all
-kubectl delete namespace mikhmon-app
+kubectl get deployments -n mikhmon-app
+kubectl get pods -n mikhmon-app
+```
+
+Delete the resources from cluster:
+```shell
+kubectl delete -f ingress.yml
+kubectl delete -f services.yml
+kubectl delete -f deployments.yml
+kubectl delete -f pvc.yml
+kubectl delete -f namespace.yml
 ```
 
 ### Docker Compose
-Enter the `docker-compose` directory, and you will found two options to of using it.
-1. **Caddy**. Cool web server that automatically provision SSL (Let's Encrypt) for your site, port `80/tcp` will redirected to `443/tcp`.
-2. **Nginx**. Run `80/tcp` without SSL by default. But you can modify `nginx.conf` to use certificates and open another port as you wish.
+Enter the `docker-compose` directory. The application uses a pre-built image `trianwar/mikhmon:latest` with Caddy as a reverse proxy to handle SSL termination automatically via Let's Encrypt.
 
-Change the owner to `uid=82(www-data) gid=82(www-data)`, this is because the [`php:7.4-fpm-alpine`](https://hub.docker.com/_/php?tab=tags&page=1&name=7.4-fpm-alpine) seemly [use that user by default](https://hub.docker.com/layers/php/library/php/7.4.0-fpm-alpine/images/sha256-35565c5edd4dd676a7ea7d7b566eab08b2ee6474263f6cd384d4d29d4590a199?context=explore), and I don't find other way to alter it yet. Also, don't forget to change the domain name of your server in `Caddyfile`.
-
-```shell
-cd mikhmon-container/docker-compose
-rm -rvf mikhmonv3
-git clone https://github.com/laksa19/mikhmonv3.git
-sudo chown -R 82:82 mikhmonv3
-```
-
-For `caddy` you may append Public IP of the VPS and FQDN to `/etc/hosts` configuration file. Bellow are example from my AWS EC2 server.
+Update the domain name in `Caddyfile` to match your server's FQDN, and optionally add it to `/etc/hosts` for local testing:
 
 ```shell
 echo '108.136.227.206 mikhmon.init.web.id' | sudo tee -a /etc/hosts
 ```
 
-Then let's build and turn it up. Append `-d` to detach and keep it running in background.
+Then, create the network and start the services:
 ```shell
+cd mikhmon-container/docker-compose
 docker network create net1 --driver bridge
-docker compose -p mikhmon up --build --remove-orphans -d
+docker compose -p mikhmon up -d
 docker compose ls
 docker ps
 ```
@@ -71,20 +77,29 @@ docker ps
 ![Add Router](https://github.com/anwareset/mikhmon-container/raw/main/Screenshot_63.png)
 As you can see the MikroTik Router is added successfully to MIKHMON, and we got one year valid SSL from Let's Encrypt.
 
-To stop the container, you can turn it down.
+To stop the services:
 ```shell
-docker compose -p mikhmon down --remove-orphans
+docker compose -p mikhmon down
 ```
 
 ## Testing
 ### Dockerfile
-Feel free to modify and build the `Dockerfile` to fit with your needs.
+Feel free to modify and build the `Dockerfile` to fit with your needs. Make sure to have `nginx.conf` and `supervisord.conf` in the same directory.
 ```shell
-docker build --no-cache -t mikhmon .
+docker build --no-cache -t trianwar/mikhmon:latest .
 ```
 
-## Shortage
-Please check this [#issue](https://github.com/laksa19/mikhmonv3/issues/41) from the application side. Persistent Volume on Kubernetes unable to use due to Unspesific Location of Stateful files.
+You can also tag it with a version:
+```shell
+docker build --no-cache -t trianwar/mikhmon:v1.0 .
+```
+
+## Notes
+- The application stores stateful data (like router configurations and user passwords) in the `/var/www/mikhmon` directory.
+- For Kubernetes deployments, ensure that your cluster has a StorageClass configured for dynamic persistent volume provisioning, or manually create PersistentVolumes.
+- The `nginx.conf` and `supervisord.conf` files must be present in the root directory when building the Docker image.
+- When using Caddy in Docker Compose, remember to update the domain name in the `Caddyfile` to your actual server's FQDN.
+- For more information on the MIKHMON application, visit [laksa19's GitHub](https://laksa19.github.io/?mikhmon/v3).
 
 ---
 

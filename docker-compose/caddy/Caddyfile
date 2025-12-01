@@ -1,5 +1,5 @@
 mikhmon.init.web.id {
-  root * /var/www/html
-  php_fastcgi php7-mikhmon:9000
+  root * /var/www/mikhmon
+  reverse_proxy php7-mikhmon:8080
   file_server
 }

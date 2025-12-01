@@ -1,0 +1,7 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mikhmon-app
+  labels:
+    name: mikhmon-app

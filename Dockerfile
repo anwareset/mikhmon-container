@@ -5,7 +5,7 @@ RUN apk add --no-cache unzip curl \
     && rm -rf *.zip \
     && mv -f mikhmon* /tmp/mikhmon
 
-FROM php:7.4-cli-alpine
+FROM php:7.4-fpm-alpine
 ARG BUILD_DATE
 ARG BUILD_VERSION
 LABEL org.opencontainers.image.authors="trianwar@pm.me" \
@@ -16,10 +16,23 @@ LABEL org.opencontainers.image.authors="trianwar@pm.me" \
     org.label-schema.url="https://init.web.id" \
     org.label-schema.vcs-url="https://github.com/anwareset/mikhmon-container" \
     org.label-schema.version=$BUILD_VERSION \
-    org.label-schema.docker.cmd="docker run -v .:/var/www/html -p 80:80 -d trianwar/mikhmon" \
+    org.label-schema.docker.cmd="docker run --name mikhmon-app -d -p 8080:8080 -v mikhmon-volume trianwar/mikhmon" \
     org.label-schema.description="MIKHMON (MikroTik Hotspot Monitor) V3 by laksa19 inside container."
+
+# Install system dependencies and PHP extensions
+RUN apk add --no-cache curl unzip gmp-dev gettext-dev libpng-dev libjpeg-turbo-dev zlib-dev nginx supervisor \
+    && docker-php-ext-install gmp gettext pcntl gd session \
+    && docker-php-ext-enable gmp gettext pcntl gd session
+
 WORKDIR /var/www/mikhmon
 COPY --from=sourcecode /tmp/mikhmon ./
+
+# Copy nginx and supervisord configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY supervisord.conf /etc/supervisord.conf
+
 VOLUME ["/var/www/mikhmon"]
-EXPOSE 80
-CMD ["php", "-S", "0.0.0.0:80"]
+EXPOSE 8080
+
+# Start supervisord to manage both nginx and php-fpm
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

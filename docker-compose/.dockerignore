@@ -1,5 +1,4 @@
 docker-compose/
-k8s-manifests/
 README.md
 Screenshot*.png
 .gitignore

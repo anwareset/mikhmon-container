@@ -1,3 +1,0 @@
-[submodule "docker-compose/mikhmonv3"]
-	path = docker-compose/mikhmonv3
-	url = https://github.com/laksa19/mikhmonv3.git
