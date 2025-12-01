@@ -95,7 +95,7 @@ docker build --no-cache -t trianwar/mikhmon:v1.0 .
 ```
 
 ## Notes
-- The application stores stateful data (like router configurations and user passwords) in the `/var/www/mikhmon` directory.
+- The application stores stateful data (like router configurations and user passwords) in the `/var/www/mikhmon` container directory, or `mikhmon-data` host directory.
 - For Kubernetes deployments, ensure that your cluster has a StorageClass configured for dynamic persistent volume provisioning, or manually create PersistentVolumes.
 - The `nginx.conf` and `supervisord.conf` files must be present in the root directory when building the Docker image.
 - When using Caddy in Docker Compose, remember to update the domain name in the `Caddyfile` to your actual server's FQDN.
