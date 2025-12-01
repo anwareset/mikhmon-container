@@ -61,7 +61,7 @@ Enter the `docker-compose` directory. The application uses a pre-built image `tr
 Update the domain name in `Caddyfile` to match your server's FQDN, and optionally add it to `/etc/hosts` for local testing:
 
 ```shell
-echo '108.136.227.206 mikhmon.init.web.id' | sudo tee -a /etc/hosts
+echo '108.136.227.206 mikhmon.deployer.dpdns.org' | sudo tee -a /etc/hosts
 ```
 
 Then, create the network and start the services:
