@@ -1,4 +1,4 @@
-mikhmon.deployer.dpdns.org {
+mikhmon.init.web.id {
   root * /var/www/mikhmon
   reverse_proxy php7-mikhmon:8080
   file_server
