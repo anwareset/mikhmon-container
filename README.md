@@ -9,13 +9,13 @@ This image is using latest [alpine](https://hub.docker.com/_/alpine) for the bas
 Use any container tool such as `docker` or `podman` with simple command.
 ```shell
 docker pull trianwar/mikhmon
-docker run --name mikhmon-app -d -p 8080:8080 -v mikhmon-volume trianwar/mikhmon
+docker run --name mikhmon-app -d -p 8080:8080 -v ./mikhmon-data:/var/www/mikhmon trianwar/mikhmon
 ```
-If you want to access source code files inside the container storage, check the mounted volume on host at `/var/lib/docker/volumes`. You can backup or modify those files.
+If you want to access source code files inside the container storage, check the mounted volume on host at `mikhmon-data`. You can backup or modify those files.
 
 To force stop and remove container.
 ```shell
-docker rm --force mikhmon-app
+docker rm --force --volumes mikhmon-app
 ```
 
 ### Kubernetes

@@ -33,7 +33,7 @@ VOLUME ["/var/www/mikhmon"]
 EXPOSE 8080
 HEALTHCHECK --interval=20s --timeout=5s --start-period=15s --retries=3 \
   CMD if [ "$MODE" = "caddy" ]; then \
-        SCRIPT_NAME=/ping REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000 >/dev/null 2>&1 || exit 1; \
+        cgi-fcgi -bind -connect 127.0.0.1:9000 >/dev/null 2>&1 || exit 1; \
       else \
         curl -fsS http://127.0.0.1:8080 >/dev/null 2>&1 || exit 1; \
       fi
