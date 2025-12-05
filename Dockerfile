@@ -11,7 +11,7 @@ LABEL org.opencontainers.image.authors="trianwar@pm.me" \
     org.label-schema.version=$BUILD_VERSION \
     org.label-schema.docker.cmd="docker run --name mikhmon-app -d -p 8080:8080 -v mikhmon-volume trianwar/mikhmon" \
     org.label-schema.description="MIKHMON (MikroTik Hotspot Monitor) V3 by laksa19 inside container."
-RUN apk add --no-cache curl unzip gmp-dev gettext-dev libpng-dev libjpeg-turbo-dev zlib-dev nginx supervisor && \
+RUN apk add --no-cache curl unzip gmp-dev gettext-dev libpng-dev libjpeg-turbo-dev zlib-dev fcgi nginx supervisor && \
     docker-php-ext-install gmp gettext pcntl gd session && \
     docker-php-ext-enable gmp gettext pcntl gd session && \
     rm -rf /var/cache/apk/* /tmp/* && \
@@ -31,4 +31,10 @@ RUN mkdir -p /var/www/mikhmon/storage && \
     chmod +x /entrypoint.sh
 VOLUME ["/var/www/mikhmon"]
 EXPOSE 8080
+HEALTHCHECK --interval=20s --timeout=5s --start-period=15s --retries=3 \
+  CMD if [ "$MODE" = "caddy" ]; then \
+        SCRIPT_NAME=/ping REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000 >/dev/null 2>&1 || exit 1; \
+      else \
+        curl -fsS http://127.0.0.1:8080 >/dev/null 2>&1 || exit 1; \
+      fi
 ENTRYPOINT ["/entrypoint.sh"]
